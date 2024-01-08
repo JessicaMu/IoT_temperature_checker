@@ -113,8 +113,8 @@ int http_status = WL_IDLE_STATUS;
 /* ThingSpeak ---------------------------------------------------------------*/
 
 const bool THINGSPEAK_POST_ENABLE = true ;
-const unsigned long THINGSPEAK_CHANNEL_ID = 2396838;
-const char * THINGSPEAK_WRITEAPIKEY = "K4Z6QTJXCYYG9IM2";
+const unsigned long THINGSPEAK_CHANNEL_ID = 2397688;
+const char * THINGSPEAK_WRITEAPIKEY = "0BEEAJ0HJ9HG92FN";
 
 WiFiClient  thingspeak_client;
 SimpleTimer thingspeak_timer ;
