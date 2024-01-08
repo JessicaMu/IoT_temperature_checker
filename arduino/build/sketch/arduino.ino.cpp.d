@@ -26,11 +26,12 @@ C:\Users\Student\Documents\1\ Uni\ Year\ 3\temperature_checker\IoT_temperature_c
  C:\Users\Student\AppData\Local\Arduino15\packages\arduino\hardware\megaavr\1.8.8\cores\arduino/MSC.h \
  C:\Users\Student\AppData\Local\Arduino15\packages\arduino\hardware\megaavr\1.8.8\cores\arduino/UNO_compat.h \
  C:\Users\Student\AppData\Local\Arduino15\packages\arduino\hardware\megaavr\1.8.8\cores\arduino/Arduino.h \
+ C:\Users\Student\Documents\Arduino\libraries\ThingSpeak\src/ThingSpeak.h \
+ C:\Users\Student\AppData\Local\Arduino15\packages\arduino\hardware\megaavr\1.8.8\cores\arduino/api/deprecated/Client.h \
+ c:\users\student\appdata\local\arduino15\packages\arduino\hardware\megaavr\1.8.8\cores\arduino\api\client.h \
  C:\Users\Student\Documents\Arduino\libraries\ArduinoHttpClient\src/ArduinoHttpClient.h \
  C:\Users\Student\Documents\Arduino\libraries\ArduinoHttpClient\src/HttpClient.h \
  C:\Users\Student\AppData\Local\Arduino15\packages\arduino\hardware\megaavr\1.8.8\cores\arduino/api/deprecated/IPAddress.h \
- C:\Users\Student\AppData\Local\Arduino15\packages\arduino\hardware\megaavr\1.8.8\cores\arduino/api/deprecated/Client.h \
- c:\users\student\appdata\local\arduino15\packages\arduino\hardware\megaavr\1.8.8\cores\arduino\api\client.h \
  C:\Users\Student\Documents\Arduino\libraries\ArduinoHttpClient\src/WebSocketClient.h \
  C:\Users\Student\Documents\Arduino\libraries\ArduinoHttpClient\src/URLEncoder.h \
  C:\Users\Student\Documents\Arduino\libraries\ArduinoHttpClient\src/b64.h \

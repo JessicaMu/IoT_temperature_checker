@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #line 1 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#include <ThingSpeak.h>
 #include <ArduinoHttpClient.h>
 #include <b64.h>
 #include <HttpClient.h>
@@ -102,7 +103,7 @@ WiFiClient mqtt_wifi_client;
 MqttClient mqtt_client(mqtt_wifi_client);
 
 /* HTTP ---------------------------------------------------------------------*/
-
+/*
 const bool HTTP_POST_ENABLE = false ;
 char HTTP_SERVER_ADDRESS[] = "192.168.0.3"; 
 int HTTP_SERVER_PORT = 8080;
@@ -110,6 +111,15 @@ int HTTP_SERVER_PORT = 8080;
 WiFiClient http_wifi;
 HttpClient http_client = HttpClient(http_wifi, HTTP_SERVER_ADDRESS, HTTP_SERVER_PORT);
 int http_status = WL_IDLE_STATUS;
+*/
+/* ThingSpeak ---------------------------------------------------------------*/
+
+const bool THINGSPEAK_POST_ENABLE = true ;
+const unsigned long THINGSPEAK_CHANNEL_ID = 2396838;
+const char * THINGSPEAK_WRITEAPIKEY = "K4Z6QTJXCYYG9IM2";
+
+WiFiClient  thingspeak_client;
+SimpleTimer thingspeak_timer ;
 
 /* Timers -------------------------------------------------------------------*/
 
@@ -119,45 +129,47 @@ SimpleTimer sample_timer;
 
 /* Setup --------------------------------------------------------------------*/
 
-#line 120 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 130 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void setup();
-#line 163 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 176 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void loop();
-#line 185 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 201 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void samplingStart();
-#line 189 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 205 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void samplingTask();
-#line 250 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 266 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void enable_LCD();
-#line 267 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 283 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void printWifiStatus();
-#line 292 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 308 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void enable_WiFi();
-#line 309 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
-void connect_to_WiFi();
 #line 325 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+void connect_to_WiFi();
+#line 341 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void enable_MQTT();
-#line 340 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
-void publish_MQTT();
 #line 356 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+void publish_MQTT();
+#line 372 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void enable_Time();
-#line 371 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 387 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void print_Time();
-#line 383 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 399 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void store_Time();
-#line 389 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 405 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void enable_NTP();
-#line 394 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 410 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 unsigned long getNtpTime();
-#line 402 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 418 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void enable_WebServer();
-#line 406 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 422 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void printWebPage();
-#line 465 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
-void http_Post();
+#line 481 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+void enable_ThingSpeak();
 #line 488 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+void post_ThingSpeak();
+#line 512 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void SerialTask();
-#line 120 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
+#line 130 "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\arduino.ino"
 void setup() {
 
   // Initiaise the serial port
@@ -194,6 +206,9 @@ void setup() {
   // Enable MQTT
   enable_MQTT() ;
 
+  // Enable ThingSpeak
+  enable_ThingSpeak() ;
+
   // Start the web server
   enable_WebServer() ;
   printWifiStatus();
@@ -215,8 +230,11 @@ void loop() {
     if (MQTT_PUBLISH_ENABLE) {
       publish_MQTT() ;
     }
-    if (HTTP_POST_ENABLE) {
-      http_Post() ;
+  }
+  if (thingspeak_timer.isReady()) {
+    thingspeak_timer.reset();
+    if (THINGSPEAK_POST_ENABLE) {
+      post_ThingSpeak() ;
     }
   }
 }
@@ -501,27 +519,35 @@ void printWebPage() {
   }
 }
 
-/* Database Post ------------------------------------------------------------*/
+/* ThingSpeak ---------------------------------------------------------------*/
 
-void http_Post() {
+void enable_ThingSpeak() {
 
-  Serial.println("Connecting to database...");
+ thingspeak_timer.setInterval(60000) ;
+ ThingSpeak.begin(thingspeak_client);
 
-  if (http_client.connect(HTTP_SERVER_ADDRESS, HTTP_SERVER_PORT)) {
+}
 
-    String PostData = "someDataToPost";
+void post_ThingSpeak() {
 
-    http_client.println("POST /Api/AddParking/3 HTTP/1.1");
-    http_client.println("Host: 10.0.0.138");
-    http_client.println("User-Agent: Arduino/1.0");
-    http_client.println("Connection: close");
-    http_client.print("Content-Length: ");
-    http_client.println(PostData.length());
-    http_client.println();
-    http_client.println(PostData);
-  } else {
-    Serial.println("Failed to connect to server");
+  Serial.println("Updating ThingSpeak Channel ...");
+
+  ThingSpeak.setField(1, temperature_time);
+  ThingSpeak.setField(2, temperature);
+  ThingSpeak.setField(3, temperature_state);
+
+  // set the status
+ // ThingSpeak.setStatus(myStatus);
+
+  int x = ThingSpeak.writeFields(THINGSPEAK_CHANNEL_ID, THINGSPEAK_WRITEAPIKEY);
+
+  if(x == 200){
+    Serial.println("ThingSpeak Channel update successful.");
   }
+  else{
+    Serial.println("ThinkSpeak Problem updating channel. HTTP error code " + String(x));
+  }
+
 }
 
 /* Serial -------------------------------------------------------------------*/

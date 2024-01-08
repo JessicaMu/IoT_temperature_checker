@@ -11,6 +11,11 @@
   },
   {
     "Sourcefile": "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\build\\sketch\\arduino.ino.cpp",
+    "Include": "ThingSpeak.h",
+    "Includepath": "C:\\Users\\Student\\Documents\\Arduino\\libraries\\ThingSpeak\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\build\\sketch\\arduino.ino.cpp",
     "Include": "ArduinoHttpClient.h",
     "Includepath": "C:\\Users\\Student\\Documents\\Arduino\\libraries\\ArduinoHttpClient\\src"
   },
@@ -46,6 +51,11 @@
   },
   {
     "Sourcefile": "C:\\Users\\Student\\Documents\\1 Uni Year 3\\temperature_checker\\IoT_temperature_checker\\arduino\\build\\sketch\\arduino.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Student\\Documents\\Arduino\\libraries\\ThingSpeak\\src\\ThingSpeak.cpp",
     "Include": "",
     "Includepath": null
   },
