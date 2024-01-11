@@ -219,10 +219,11 @@ void samplingTask() {
   store_Time() ;
   adc_value = analogRead(pinTempSensor);
 
-  temperature_resistance = 1023.0/adc_value-1.0;
+  temperature_resistance = (1023.0/adc_value)-1.0;
   temperature_resistance = R0*temperature_resistance;
 
-  temperature = 1.0/(log(temperature_resistance/R0)/B+1/298.15)-275.15; // convert to temperature via datasheet
+  temperature = 1.0/((log(temperature_resistance/R0)/B)+(1/294.15));
+  temperature = temperature-273.15; 
 
   // Print a message to the LCD on the second line.
   val_int = (int) temperature;   // compute the integer part of the float 
