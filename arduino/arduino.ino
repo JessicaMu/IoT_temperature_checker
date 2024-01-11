@@ -45,8 +45,8 @@ rgb_lcd lcd;
 
 /* Temperature Sensor -------------------------------------------------------*/
 
-const int B = 4275;               // B value of the thermistor
-const int R0 = 100000;            // R0 = 100k
+const int B = 4275.0;               // B value of the thermistor
+const int R0 = 100000.0;            // R0 = 100k
 const int pinTempSensor = A0;     // Grove - Temperature Sensor connect to A0
 
 /* Temperature Thresholds ---------------------------------------------------*/
@@ -210,7 +210,8 @@ void samplingTask() {
   char buff[16];
   int val_int;
   int val_fra;
-  char text[10];
+  char text[10]; 
+  String temp_msg_str ;
 
   print_Time() ;
   Serial.print("Sampling temperature: ");
@@ -221,7 +222,7 @@ void samplingTask() {
   temperature_resistance = 1023.0/adc_value-1.0;
   temperature_resistance = R0*temperature_resistance;
 
-  temperature = 1.0/(log(temperature_resistance/R0)/B+1/298.15)-273.15; // convert to temperature via datasheet
+  temperature = 1.0/(log(temperature_resistance/R0)/B+1/298.15)-275.15; // convert to temperature via datasheet
 
   // Print a message to the LCD on the second line.
   val_int = (int) temperature;   // compute the integer part of the float 
@@ -258,8 +259,16 @@ void samplingTask() {
   lcd.setCursor(10, 1);
   lcd.print(temperature_message) ;
 
-  Serial.print(temperature_message);
-  Serial.println(text) ;
+  temp_msg_str = String(temperature_message);
+
+  Serial.print(temperature);
+  Serial.print(" ");
+  Serial.print(temp_msg_str);
+  Serial.print(" ");
+  Serial.print(adc_value);
+  Serial.print(" ");
+  Serial.println(temperature_resistance);
+  //Serial.println(text) ;
 }
 
 /* LCD Screen ---------------------------------------------------------------*/
@@ -356,11 +365,15 @@ void enable_MQTT() {
 
 void publish_MQTT() {
     // Publish message
-    Serial.print("Pubishing to the MQTT broker: ");
+    Serial.print("Publishing to the MQTT broker: ");
     Serial.print("Topic ") ;
     Serial.print(MQTT_TOPIC);
     Serial.print(" Value ") ;
     Serial.println(temperature);
+    Serial.print(" Value ") ;
+    Serial.println(temperature_state);
+    Serial.print(" Value ") ;
+    Serial.println(temperature_message);
     mqtt_client.beginMessage(MQTT_TOPIC);
     mqtt_client.print(temperature_time);
     mqtt_client.print(" ");
