@@ -18,6 +18,8 @@
 /* Hardware Configuration ---------------------------------------------------*/
 
 int ledPin = LED_BUILTIN;
+int buzzerPin = 6;
+int buttonPin = 2;
 
 /* Serial Configuration -----------------------------------------------------*/
 
@@ -42,6 +44,20 @@ const int colorG_cold = 0;
 const int colorB_cold = 128;
 
 rgb_lcd lcd; 
+
+/* Buzzer State -------------------------------------------------------*/
+
+int buzzer_on = 100;
+int buzzer_off = 300;
+
+bool buzzer_active = false;
+bool buzzer_silenced = false ;
+SimpleTimer buzzer_timer;
+bool buzzer_required = false ;
+
+/* Button State -------------------------------------------------------*/
+
+int buttonState ;
 
 /* Temperature Sensor -------------------------------------------------------*/
 
@@ -136,6 +152,12 @@ void setup() {
   // Initiaise the MPU hardware
   pinMode(ledPin, OUTPUT);
 
+  // Initiaise the buzzer
+  pinMode(buzzerPin, OUTPUT);
+
+  // Initiaise the button
+  pinMode(buttonPin, INPUT);
+
   // Wait until the serial port is ready
   while (!Serial);
   
@@ -148,6 +170,10 @@ void setup() {
 
   // Enable WiFI
   enable_WiFi();
+
+  enable_Buzzer() ;
+
+  enable_Button() ;
 
   // Enable temperature sampling
   samplingStart();
@@ -178,6 +204,8 @@ void loop() {
 
   web_client = web_server.available();
 
+  handleButton() ;
+
   if (web_client) {
       printWebPage();
   }
@@ -197,6 +225,63 @@ void loop() {
   }
 }
 
+/* Buzzer -------------------------------------------------------------------*/
+
+void enable_Buzzer() {
+  buzzer_active = false;
+  buzzer_silenced = false ;
+  buzzer_timer.reset() ;
+  buzzer_required = false ;
+}
+
+void startBuzzer() {
+  buzzer_required = true ;
+}
+
+void stopBuzzer() {
+  buzzer_required = false ;
+  buzzer_silenced = false ;
+}
+
+void silenceBuzzer() {
+  buzzer_silenced = true ;
+}
+
+void handleBuzzer()
+{
+  if (buzzer_required) {
+    if (buzzer_silenced){
+      buzzer_active = false;
+      digitalWrite(buzzerPin, LOW);
+    } 
+    else if(buzzer_active == false) {
+      buzzer_active = true;
+      digitalWrite(buzzerPin, HIGH);
+    }
+  }  else if (buzzer_active){
+        stopBuzzer();
+        digitalWrite(buzzerPin, LOW);
+        buzzer_active = false;
+        buzzer_silenced = false ;
+  }
+}
+
+/* Handling Button -----------------------------------------------------*/
+
+void enable_Button() {
+  pinMode(buttonPin, INPUT) ;
+  buttonState = LOW ;
+}
+
+void handleButton() {
+  buttonState = digitalRead(buttonPin);
+  if (buttonState == HIGH) {
+    silenceBuzzer();
+  }
+  //Serial.print("Button State: ");
+  //Serial.println(buttonState);
+}
+
 /* Temperature Sampling -----------------------------------------------------*/
 
 void samplingStart() {
@@ -212,6 +297,7 @@ void samplingTask() {
   int val_fra;
   char text[10]; 
   String temp_msg_str ;
+
 
   print_Time() ;
   Serial.print("Sampling temperature: ");
@@ -235,13 +321,22 @@ void samplingTask() {
   if (temperature > TEMPERATURE_HIGH) {
     temperature_state = TEMPERATURE_STATE_TOO_HOT ;
     strcpy(temperature_message, "HOT") ;
+
+    startBuzzer() ;
+    
   } else if (temperature < TEMPERATURE_LOW) {
     temperature_state = TEMPERATURE_STATE_TOO_COLD ;
     strcpy(temperature_message, "COLD") ;
+
+    startBuzzer() ;
+
   } else {
     temperature_state = TEMPERATURE_STATE_OK;
     strcpy(temperature_message, "OK") ;
+    stopBuzzer() ;
   }
+
+  handleBuzzer() ;
 
   switch (temperature_state) {
     case TEMPERATURE_STATE_OK:
@@ -261,15 +356,20 @@ void samplingTask() {
   lcd.print(temperature_message) ;
 
   temp_msg_str = String(temperature_message);
-
+  
   Serial.print(temperature);
   Serial.print(" ");
-  Serial.print(temp_msg_str);
+  Serial.print("Temperature Message: " + temp_msg_str);
   Serial.print(" ");
-  Serial.print(adc_value);
+  Serial.print("Buzzer Required: ");
+  Serial.print(buzzer_required);
   Serial.print(" ");
-  Serial.println(temperature_resistance);
-  //Serial.println(text) ;
+  Serial.print("Buzzer Active: ");
+  Serial.print(buzzer_active);
+  Serial.print(" ");
+  Serial.print("Buzzer Silenced: ");
+  Serial.print(buzzer_silenced);
+  Serial.println(" ");
 }
 
 /* LCD Screen ---------------------------------------------------------------*/
