@@ -9,7 +9,6 @@
 #include <TimeLib.h>
 #include <ArduinoMqttClient.h>
 #include <MqttClient.h>
-//#include <ArduinoBLE.h>
 #include <rgb_lcd.h>
 #include <math.h>
 #include <SimpleTimer.h>
@@ -52,7 +51,7 @@ const int pinTempSensor = A0;     // Grove - Temperature Sensor connect to A0
 /* Temperature Thresholds ---------------------------------------------------*/
 
 const int TEMPERATURE_HIGH = 25.0 ;
-const int TEMPERATURE_LOW = 24.0 ;
+const int TEMPERATURE_LOW = 20.0 ;
 
 /* Temperature State --------------------------------------------------------*/
 
@@ -76,13 +75,6 @@ const char WIFI_PASS[] = "pqbMycYM637eRb";
 
 int wifi_status = WL_IDLE_STATUS;
 
-/* Web Server ---------------------------------------------------------------*/
-
-const int WEB_SERVER_PORT=80 ;
-
-WiFiServer web_server(WEB_SERVER_PORT);
-WiFiClient web_client = web_server.available();
-
 /* NTP ----------------------------------------------------------------------*/
 
 const int NTP_INTERVAL = 60 ;
@@ -101,16 +93,6 @@ const char MQTT_TOPIC[]  = "warmth-checker";
 WiFiClient mqtt_wifi_client;
 MqttClient mqtt_client(mqtt_wifi_client);
 
-/* HTTP ---------------------------------------------------------------------*/
-/*
-const bool HTTP_POST_ENABLE = false ;
-char HTTP_SERVER_ADDRESS[] = "192.168.0.3"; 
-int HTTP_SERVER_PORT = 8080;
-
-WiFiClient http_wifi;
-HttpClient http_client = HttpClient(http_wifi, HTTP_SERVER_ADDRESS, HTTP_SERVER_PORT);
-int http_status = WL_IDLE_STATUS;
-*/
 /* ThingSpeak ---------------------------------------------------------------*/
 
 const bool THINGSPEAK_POST_ENABLE = true ;
@@ -123,8 +105,6 @@ SimpleTimer thingspeak_timer ;
 /* Timers -------------------------------------------------------------------*/
 
 SimpleTimer sample_timer;
-
-/* Hardware State -----------------------------------------------------------*/
 
 /* Setup --------------------------------------------------------------------*/
 
@@ -167,20 +147,12 @@ void setup() {
   // Enable ThingSpeak
   enable_ThingSpeak() ;
 
-  // Start the web server
-  enable_WebServer() ;
   printWifiStatus();
 }
 
 /* Main loop ----------------------------------------------------------------*/
 
 void loop() {
-
-  web_client = web_server.available();
-
-  if (web_client) {
-      printWebPage();
-  }
 
   if (sample_timer.isReady()) {
     sample_timer.reset();
@@ -262,14 +234,13 @@ void samplingTask() {
 
   temp_msg_str = String(temperature_message);
 
+  Serial.print(" ") ;
+  Serial.print("Temperature (Celcius): ");
+  Serial.print(" ");
   Serial.print(temperature);
   Serial.print(" ");
-  Serial.print(temp_msg_str);
-  Serial.print(" ");
-  Serial.print(adc_value);
-  Serial.print(" ");
-  Serial.println(temperature_resistance);
-  //Serial.println(text) ;
+  Serial.print("Temperature Message: ");
+  Serial.println(temp_msg_str);
 }
 
 /* LCD Screen ---------------------------------------------------------------*/
@@ -367,14 +338,15 @@ void enable_MQTT() {
 void publish_MQTT() {
     // Publish message
     Serial.print("Publishing to the MQTT broker: ");
-    Serial.print("Topic ") ;
+    Serial.print("Topic: ") ;
     Serial.print(MQTT_TOPIC);
-    Serial.print(" Value ") ;
-    Serial.println(temperature);
-    Serial.print(" Value ") ;
-    Serial.println(temperature_state);
-    Serial.print(" Value ") ;
-    Serial.println(temperature_message);
+    Serial.print(" Temperature Value: ") ;
+    Serial.print(temperature);
+    Serial.print(" Temperature State Value: ") ;
+    Serial.print(temperature_state);
+    Serial.print(" Temperature Message Value: ") ;
+    Serial.print(temperature_message);
+    Serial.println(" ") ;
     mqtt_client.beginMessage(MQTT_TOPIC);
     mqtt_client.print(temperature_time);
     mqtt_client.print(" ");
@@ -430,69 +402,6 @@ unsigned long getNtpTime()
 {
   Serial.println("Getting time from NTP server ");
   return ntp_client.getUnixTime();
-}
-
-/* Web Server ---------------------------------------------------------------*/
-
-void enable_WebServer() {
-  web_server.begin();
-}
-
-void printWebPage() {
-
-  if (web_client) {                             // if you get a client,
-    Serial.println("new client");           // print a message out the serial port
-    String currentLine = "";                // make a String to hold incoming data from the client
-    while (web_client.connected()) {            // loop while the client's connected
-      if (web_client.available()) {             // if there's bytes to read from the client,
-        char c = web_client.read();             // read a byte, then
-        Serial.write(c);                    // print it out the serial monitor
-        if (c == '\n') {                    // if the byte is a newline character
-
-          // if the current line is blank, you got two newline characters in a row.
-          // that's the end of the client HTTP request, so send a response
-          if (currentLine.length() == 0) {
-
-            // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
-            // and a content-type so the client knows what's coming, then a blank line
-            web_client.println("HTTP/1.1 200 OK");
-            web_client.println("Content-type:text/html");
-            web_client.println();
-           
-            //create the buttons
-            web_client.print("Click <a href=\"/H\">here</a> turn the LED on<br>");
-            web_client.print("Click <a href=\"/L\">here</a> turn the LED off<br><br>");
-            
-            int randomReading = analogRead(A1);
-            web_client.print("Temperature: ");
-            web_client.print(temperature);
-           
-            // The HTTP response ends with another blank line
-            web_client.println();
-            // break out of the while loop
-            break;
-          }
-          else {      // if you got a newline, then clear currentLine
-            currentLine = "";
-          }
-        }
-        else if (c != '\r') {    // if you got anything else but a carriage return character,
-          currentLine += c;      // add it to the end of the currentLine
-        }
-
-        if (currentLine.endsWith("GET /H")) {
-          digitalWrite(ledPin, HIGH);        
-        }
-        if (currentLine.endsWith("GET /L")) {
-          digitalWrite(ledPin, LOW);       
-        }
-
-      }
-    }
-    // close the connection
-    web_client.stop();
-    Serial.println("client disconnected");
-  }
 }
 
 /* ThingSpeak ---------------------------------------------------------------*/
