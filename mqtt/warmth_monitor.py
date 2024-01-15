@@ -1,10 +1,3 @@
-# Notes
-# Libraies to install:
-#   pip install twilio
-#   pip install paho-mqtt
-# To run:
-#   python warmth_monitor.py
-
 # MQTT Library
 from paho.mqtt import client as mqtt_client
 
