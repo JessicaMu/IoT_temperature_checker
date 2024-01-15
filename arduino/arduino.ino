@@ -70,8 +70,8 @@ char temperature_message[5] ;
 
 /* WiFi ---------------------------------------------------------------------*/
 
-const char WIFI_SSID[] = "BT-QPAF2N";
-const char WIFI_PASS[] = "pqbMycYM637eRb";
+const char WIFI_SSID[] = " ";
+const char WIFI_PASS[] = " ";
 
 int wifi_status = WL_IDLE_STATUS;
 
